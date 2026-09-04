@@ -17,6 +17,28 @@ export function evidenceTier(score: number): EvidenceTier {
   return "LOW"
 }
 
+/** Ordinal rank so filters can express "at least this tier" instead of exact equality. */
+export const EVIDENCE_TIER_RANK: Record<EvidenceTier, number> = {
+  LOW: 0,
+  MEDIUM: 1,
+  HIGH: 2,
+}
+
+/**
+ * Groups hazard points into grid cells for map clustering. Cell size shrinks
+ * as zoom increases, so clusters split apart automatically on zoom-in and
+ * merge back on zoom-out. This is a lightweight lat/lng-grid approach (not
+ * pixel-perfect like a dedicated clustering library) — good enough for the
+ * marker counts this prototype handles.
+ */
+export function clusterCellKey(lat: number, lng: number, zoom: number): string {
+  const cellDeg = 0.02 * Math.pow(2, 13 - zoom)
+  return `${Math.round(lat / cellDeg)}_${Math.round(lng / cellDeg)}`
+}
+
+/** Below this zoom, clustering is meaningless (cell would be tiny) — always show individual markers. */
+export const CLUSTER_MAX_ZOOM = 16
+
 export const EVIDENCE_TIER_LABEL: Record<EvidenceTier, string> = {
   HIGH: "High evidence",
   MEDIUM: "Medium evidence",
