@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import useSWR from "swr"
 import { toast } from "sonner"
 import {
   ArrowLeft,
@@ -21,9 +22,41 @@ import { ScoreBreakdown } from "@/components/shared/score-breakdown"
 import { BusReliability } from "@/components/panel/bus-reliability"
 import { useEvent } from "@/hooks/useEvents"
 import { useVerification } from "@/hooks/useVerification"
+import { api } from "@/lib/api"
 import { LIFECYCLE_ORDER, type LifecycleStatus } from "@/lib/types"
-import { STATUS_LABEL } from "@/lib/map"
+import { HAZARD_LABEL, STATUS_LABEL } from "@/lib/map"
 import { cn } from "@/lib/utils"
+
+function formatTimestamp(iso: string): string {
+  return new Date(iso).toLocaleString("en-IN", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  })
+}
+
+/** Shows "🔗 Waterlogging · EVT-108" instead of a bare event ID. */
+function LinkedEventChip({
+  id,
+  onSelect,
+}: {
+  id: string
+  onSelect: (id: string) => void
+}) {
+  const { data } = useSWR(["event", id], () => api.getEvent(id), {
+    revalidateOnFocus: false,
+  })
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(id)}
+      className="inline-flex items-center gap-1.5 rounded-md border border-border bg-secondary px-2 py-1 text-xs text-foreground transition-colors hover:border-primary hover:text-primary"
+    >
+      <Link2 className="size-3" aria-hidden />
+      {data ? HAZARD_LABEL[data.hazard_type] : "Linked hazard"}
+      <span className="font-mono text-[10px] text-muted-foreground">{id}</span>
+    </button>
+  )
+}
 
 // Operator identity attributed to verify/reject actions in this demo console.
 const OPERATOR = "ops-console"
@@ -192,6 +225,10 @@ export function EventDetail({
                 {event.independent_passes === 1 ? "" : "es"}
               </span>
             </div>
+            <p className="font-mono text-[11px] text-muted-foreground">
+              First seen {formatTimestamp(event.first_seen)} · Last seen{" "}
+              {formatTimestamp(event.last_seen)}
+            </p>
           </div>
 
           <div className="rounded-lg border border-border bg-secondary/40 p-3">
@@ -213,7 +250,7 @@ export function EventDetail({
                 <p className="text-sm text-foreground">
                   {confirm === "verify"
                     ? "Confirm this hazard and advance its lifecycle?"
-                    : "Reject this detection as a false positive?"}
+                    : "Reject this detection as a false positive? This will discount the reliability score of every reporting bus."}
                 </p>
                 <div className="flex gap-2">
                   <Button
@@ -253,7 +290,7 @@ export function EventDetail({
                 </Button>
                 <Button
                   size="sm"
-                  variant="secondary"
+                  variant="destructive"
                   className="flex-1"
                   onClick={() => setConfirm("reject")}
                 >
@@ -286,29 +323,25 @@ export function EventDetail({
             </div>
           </div>
 
-          {event.linked_events.length > 0 && (
-            <>
-              <Separator />
-              <div className="space-y-2">
-                <h3 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  <Link2 className="size-3.5" aria-hidden />
-                  Co-occurring events
-                </h3>
-                <div className="flex flex-wrap gap-1.5">
-                  {event.linked_events.map((id) => (
-                    <button
-                      key={id}
-                      type="button"
-                      onClick={() => onSelectLinked(id)}
-                      className="rounded-md border border-border bg-secondary px-2 py-1 font-mono text-xs text-foreground transition-colors hover:border-primary hover:text-primary"
-                    >
-                      {id}
-                    </button>
-                  ))}
-                </div>
+          <Separator />
+          <div className="space-y-2">
+            <h3 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <Link2 className="size-3.5" aria-hidden />
+              Co-occurring events
+            </h3>
+            {event.linked_events.length > 0 ? (
+              <div className="flex flex-wrap gap-1.5">
+                {event.linked_events.map((id) => (
+                  <LinkedEventChip key={id} id={id} onSelect={onSelectLinked} />
+                ))}
               </div>
-            </>
-          )}
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                No linked hazards — this detection hasn't co-occurred with
+                another one nearby.
+              </p>
+            )}
+          </div>
 
           <Separator />
 
