@@ -1,0 +1,130 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+  Control-room theme for a civic road-hazard operations console.
+  Warm ramp = evidence strength (heat/alarm). Cool teal = system + coverage.
+  Data-encoding colors (evidence/coverage) are semantically required and
+  sit alongside the tight core UI palette.
+*/
+:root {
+  --background: #0b0f14;
+  --foreground: #e6edf3;
+
+  --card: #12171f;
+  --card-foreground: #e6edf3;
+
+  --popover: #12171f;
+  --popover-foreground: #e6edf3;
+
+  --primary: #2dd4bf;
+  --primary-foreground: #042420;
+
+  --secondary: #1b222c;
+  --secondary-foreground: #e6edf3;
+
+  --muted: #1b222c;
+  --muted-foreground: #8b98a5;
+
+  --accent: #1b222c;
+  --accent-foreground: #e6edf3;
+
+  --destructive: #e5484d;
+  --destructive-foreground: #ffffff;
+
+  --border: #262e39;
+  --input: #262e39;
+  --ring: #2dd4bf;
+
+  --radius: 0.5rem;
+
+  /* Evidence strength ramp (hazard markers, scores) */
+  --evidence-high: #e5484d;
+  --evidence-medium: #e8842c;
+  --evidence-low: #d0a215;
+
+  /* Coverage density ramp (segments) */
+  --coverage-low: #37455a;
+  --coverage-medium: #2f8f96;
+  --coverage-high: #2dd4bf;
+
+  --chart-1: #2dd4bf;
+  --chart-2: #e8842c;
+  --chart-3: #e5484d;
+  --chart-4: #d0a215;
+  --chart-5: #8b98a5;
+
+  --sidebar: #0f141b;
+  --sidebar-foreground: #e6edf3;
+  --sidebar-primary: #2dd4bf;
+  --sidebar-primary-foreground: #042420;
+  --sidebar-accent: #1b222c;
+  --sidebar-accent-foreground: #e6edf3;
+  --sidebar-border: #262e39;
+  --sidebar-ring: #2dd4bf;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-evidence-high: var(--evidence-high);
+  --color-evidence-medium: var(--evidence-medium);
+  --color-evidence-low: var(--evidence-low);
+  --color-coverage-low: var(--coverage-low);
+  --color-coverage-medium: var(--coverage-medium);
+  --color-coverage-high: var(--coverage-high);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+    outline-color: color-mix(in oklab, var(--ring) 50%, transparent);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+}
