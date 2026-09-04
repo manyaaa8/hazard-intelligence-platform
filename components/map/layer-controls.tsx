@@ -1,3 +1,4 @@
+
 "use client"
 
 import { Layers3 } from "lucide-react"
@@ -107,7 +108,7 @@ export function LayerControls({
       <Separator className="my-2" />
 
       <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-        Min. evidence
+        Min. evidence (and above)
       </p>
       <div className="grid grid-cols-4 gap-1">
         {EVIDENCE_FILTERS.map((f) => (
